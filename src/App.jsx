@@ -373,7 +373,7 @@ function Header({ route, t }) {
   }, []);
 
   const solidHeader = scrolled || route !== "home";
-  const logoSrc = solidHeader ? "/images/logo-dark.png" : "/images/logo-white.png";
+  const logoSrc = solidHeader ? "images/logo-dark.png" : "images/logo-white.png";
   const desktopNavColor = solidHeader ? "lg:text-ink" : "lg:text-beige";
   const controlsColor = solidHeader ? "text-ink" : "text-beige";
   const mobileNavItems = [
