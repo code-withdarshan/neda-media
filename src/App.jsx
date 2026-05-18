@@ -394,17 +394,16 @@ function Header({ route, t }) {
             : "bg-transparent py-5"
         }`}
       >
-        <div className="container-shell flex items-center justify-between gap-6">
-          <a href="#/" onClick={close} className="shrink-0">
+        <div className="container-shell grid grid-cols-1 items-center lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
+          <a href="#/" onClick={close} className="shrink-0 justify-self-start">
             <img src={logoSrc} alt="Neda Media" className="h-12 w-40 object-contain" />
           </a>
 
-          <div className="hidden items-center gap-7 lg:flex lg:ml-auto">
-            <nav
-              className={`text-sm font-semibold uppercase ${desktopNavColor}`}
-              aria-label={t.nav.services}
-            >
-              <ul className="flex items-center gap-7">
+          <nav
+            className={`hidden text-sm font-semibold uppercase lg:block lg:justify-self-center ${desktopNavColor}`}
+            aria-label={t.nav.services}
+          >
+            <ul className="flex items-center gap-7">
                 <li>
                   <a className={linkState(route === "about-us")} href="#/about-us" onClick={close}>
                     {t.nav.about}
@@ -422,13 +421,12 @@ function Header({ route, t }) {
                   </div>
                 </li>
               </ul>
-            </nav>
+          </nav>
 
-            <div className={`flex items-center ${controlsColor}`}>
-              <a href={CALENDLY} className={`btn py-3 ${solidHeader ? "btn-primary" : "btn-light"}`}>
-                {t.nav.meeting}
-              </a>
-            </div>
+          <div className={`hidden items-center justify-self-end lg:flex ${controlsColor}`}>
+            <a href={CALENDLY} className={`btn py-3 ${solidHeader ? "btn-primary" : "btn-light"}`}>
+              {t.nav.meeting}
+            </a>
           </div>
         </div>
       </header>
