@@ -30,7 +30,9 @@ const clients = [
   ["streex.png", "Streex"]
 ];
 
-const faqs = [
+const LOCALE_STORAGE_KEY = "neda-locale";
+
+const faqsEn = [
   [
     "What do your services cost?",
     "Pricing depends on your needs and ambitions. We create tailored packages for performance marketing and social media management."
@@ -57,7 +59,34 @@ const faqs = [
   ]
 ];
 
-const performanceData = {
+const faqsDa = [
+  [
+    "Hvad koster jeres ydelser?",
+    "Prisen afhænger af jeres behov og ambitioner. Vi skræddersyr løsninger inden for performance marketing og social media management."
+  ],
+  [
+    "Hvor hurtigt kan vi se resultater?",
+    "De fleste kunder ser tidlige resultater inden for 2–4 uger. Betalt marketing kan gå hurtigt, mens organisk sociale medier typisk kræver 2–3 måneder for at bygge fart på."
+  ],
+  [
+    "Hvilke platforme arbejder I med?",
+    "Vi er specialiserede i Meta, Google Ads, TikTok og LinkedIn. Vi vælger platforme ud fra, hvor jeres målgruppe er, og hvor vi kan skabe størst effekt."
+  ],
+  [
+    "Er der binding på jeres aftaler?",
+    "Vores samarbejder starter typisk med minimum tre måneder, så der er tid til at bygge og optimere. Derefter fortsætter vi måned for måned."
+  ],
+  [
+    "Hvad gør jer anderledes end andre bureauer?",
+    "Vi kombinerer ægte menneskeligt indhold med hårde data og løbende optimering. Vi er et lille, dedikeret team, der virkelig lærer jeres brand at kende."
+  ],
+  [
+    "Hvordan foregår et strategimøde?",
+    "Vi gennemgår jeres nuværende setup, mål og største vækstmuligheder. Efter mødet får I en klar retning for næste skridt."
+  ]
+];
+
+const performanceDataEn = {
   slug: "performance-marketing",
   image: "/images/neriah-desk.png",
   label: "Services",
@@ -114,7 +143,64 @@ const performanceData = {
     "Book a free strategy call and get a concrete plan for how we can scale your business with performance marketing."
 };
 
-const socialData = {
+const performanceDataDa = {
+  slug: "performance-marketing",
+  image: "/images/neriah-desk.png",
+  label: "Ydelser",
+  title: "Performance marketing",
+  subtitle:
+    "Data-drevet annoncering, der transformerer jeres forretning. Fra strategi til skalering — vi håndterer det hele.",
+  philosophy:
+    "Vi tror ikke på at brænde penge af på annoncer og håbe på det bedste. Vores tilgang er systematisk, kreativ og 100 % data-drevet. Hver krone i annoncebudgettet skal performe bedre end den sidste.",
+  offerTitle: "Jeres komplette performance-setup",
+  pillars: [
+    {
+      title: "Meta Ads",
+      text: "Facebook- og Instagram-annoncering med avanceret målretning, kreativt indhold og løbende optimering for maksimal ROAS.",
+      points: [
+        "Kampagnestrategi og -struktur",
+        "Kreativ produktion og test",
+        "Avanceret målgruppesegmentering",
+        "Remarketing og lookalike-målgrupper",
+        "Daglig optimering og budgetallokering"
+      ]
+    },
+    {
+      title: "Google Ads",
+      text: "Søgning, Shopping og Display-kampagner, der fanger kunder med høj intention i det øjeblik, de søger.",
+      points: [
+        "Søge- og Shopping-kampagner",
+        "Keyword-analyse og optimering",
+        "Performance Max-setup",
+        "Konverteringssporing og attribution",
+        "A/B-test af annoncer og landingssider"
+      ]
+    },
+    {
+      title: "Tracking og analyse",
+      text: "Tracking fra A til Å, så I præcist ved, hvad der virker. Vi bygger et datagrundlag, I kan stole på.",
+      points: [
+        "Meta Pixel og Conversions API",
+        "Google Analytics 4-setup",
+        "Server-side tracking",
+        "Skræddersyede dashboards og rapportering",
+        "Attributionsmodeller"
+      ]
+    }
+  ],
+  processTitle: "Sådan arbejder vi",
+  process: [
+    ["01", "Analyse og audit", "Vi dykker ned i jeres nuværende setup, analyserer data og finder de største vækstmuligheder.", "/images/process-audit.png"],
+    ["02", "Strategi og setup", "Vi bygger kampagnestruktur, tracking og kreativer, så alt er klar, før vi spender.", "/images/process-creative.png"],
+    ["03", "Launch og optimering", "Vi launcher og optimerer dagligt ud fra data, kreative tests, målgrupper og budstrategier.", "/images/process-setup.png"],
+    ["04", "Rapportering og skalering", "I får transparente rapporter, og når vi finder vindere, skalerer vi aggressivt.", "/images/process-scaling.png"]
+  ],
+  ctaTitle: "Klar til at få mest muligt ud af jeres annoncebudget?",
+  ctaText:
+    "Book et gratis strategimøde og få en konkret plan for, hvordan vi kan skalere jeres forretning med performance marketing."
+};
+
+const socialDataEn = {
   slug: "social-media",
   image: "/images/neriah-outdoor.jpeg",
   label: "Services",
@@ -162,14 +248,67 @@ const socialData = {
     "Book a free strategy call and let us discuss how we can take your social media to the next level."
 };
 
-const translations = {
+const socialDataDa = {
+  slug: "social-media",
+  image: "/images/neriah-outdoor.jpeg",
+  label: "Ydelser",
+  title: "Social media management",
+  subtitle:
+    "Ægte indhold, der bygger jeres brand. Fra strategi til eksekvering skaber vi jeres digitale tilstedeværelse.",
+  philosophy:
+    "Jeres sociale medier er jeres brandstemme. Vi skaber indhold, der føles ægte, engagerer jeres community og forvandler følgere til kunder uden at føles som reklame.",
+  offerTitle: "Jeres komplette setup til sociale medier",
+  pillars: [
+    {
+      title: "Indholdsstrategi",
+      text: "Vi udvikler en skræddersyet indholdsstrategi baseret på jeres brand, målgruppe og forretningsmål."
+    },
+    {
+      title: "Indholdsproduktion",
+      text: "Professionel foto- og videoproduktion med fokus på autentisk, menneskeligt indhold, der performer på alle platforme."
+    },
+    {
+      title: "Community management",
+      text: "Vi engagerer jeres følgere, svarer på kommentarer og beskeder og bygger et aktivt fællesskab, der elsker jeres brand."
+    },
+    {
+      title: "Analyse og rapportering",
+      text: "Månedlig rapportering med de vigtigste KPI'er, så I altid ved, hvad der virker."
+    }
+  ],
+  platformsLabel: "Platforme",
+  platformsTitle: "Vi mestrer alle kanaler",
+  platforms: [
+    ["Instagram", "Feed, Reels, Stories og guides, der stopper scroll og skaber engagement.", ["Feed æstetik og grid-planlægning", "Reels-produktion", "Story-skabeloner", "Hashtag-strategi"]],
+    ["Facebook", "Organisk indhold og community, der aktiverer jeres eksisterende følgere.", ["Engagerende opslag og video", "Gruppeadministration", "Eventpromovering", "Community engagement"]],
+    ["TikTok", "Underholdende, autentisk indhold, der rammer Gen Z og millennials.", ["Trendbaseret indhold", "UGC-lignende videoer", "Influencer-samarbejder", "Community engagement"]],
+    ["LinkedIn", "Professionelt thought leadership-indhold, der positionerer jer som eksperter.", ["Thought leadership-opslag", "Employer branding", "Indsigter fra branchen", "Netværksengagement"]]
+  ],
+  processTitle: "Fra strategi til indhold",
+  process: [
+    ["01", "Brand deep dive", "Vi lærer jeres brand, værdier og målgruppe at kende i dybden."],
+    ["02", "Strategi og planlægning", "Vi udvikler temaer, formater og publiceringskadence i en tydelig contentkalender."],
+    ["03", "Produktion og publicering", "Vi producerer indhold, skriver tekster og publicerer efter planen."],
+    ["04", "Analyse og optimering", "Vi følger resultaterne, finder topperformers og tilpasser strategien over tid."]
+  ],
+  ctaTitle: "Klar til at bygge jeres brand online?",
+  ctaText:
+    "Book et gratis strategimøde, og lad os tale om, hvordan vi kan løfte jeres sociale medier til næste niveau."
+};
+
+const translationsEn = {
   nav: {
     about: "About",
     services: "Services",
     performance: "Performance Marketing",
     social: "Social Media",
     meeting: "Book a meeting",
-    menu: "Menu"
+    menu: "Menu",
+    mobileAds: "Ads",
+    mobileSocial: "Social",
+    mobileCall: "Call",
+    langSwitcher: "Language",
+    mobileNavLabel: "Mobile navigation"
   },
   home: {
     heroLabel: "Performance Marketing Agency",
@@ -222,7 +361,27 @@ const translations = {
       "Find answers to the most important questions about collaboration, pricing, platforms and how we build growth.",
     ctaTitle: "Ready to scale your business?",
     ctaText:
-      "Book a free strategy call and let us show you exactly how Neda Media can help you grow through performance marketing and social media."
+      "Book a free strategy call and let us show you exactly how Neda Media can help you grow through performance marketing and social media.",
+    carouselTestimonials: [
+      {
+        name: "Marie Jensen",
+        designation: "Shapeit.dk",
+        quote:
+          "Neda Media has completely transformed our online presence. Our sales have taken off, and we hear from new customers every day."
+      },
+      {
+        name: "Andreas Holm",
+        designation: "Nordic Wellness Studio",
+        quote:
+          "Finally an agency that understands our brand and delivers content we're proud of. Neriah is incredibly skilled at capturing the right mood."
+      },
+      {
+        name: "Sofia Larsen",
+        designation: "Bloom Beauty",
+        quote:
+          "We went from spending on ads with no results to having a system that consistently generates leads and sales."
+      }
+    ]
   },
   services: [
     [
@@ -236,10 +395,10 @@ const translations = {
       "Content strategy, production and community management that builds your brand. Authentic storytelling that engages and creates loyal followers."
     ]
   ],
-  faq: faqs,
+  faq: faqsEn,
   servicePages: {
-    performance: performanceData,
-    social: socialData
+    performance: performanceDataEn,
+    social: socialDataEn
   },
   about: {
     title: "We are Neda Media.",
@@ -311,8 +470,228 @@ const translations = {
     engagingContent: "Content that engages",
     socialQuote:
       "Neriah truly understands our brand and creates content that feels 100% authentic. Our engagement has increased significantly.",
-    video: "Video"
+    video: "Video",
+    proofWorkImageAlt: "Proof of work",
+    ctaTeamImageAlt: "Neda Media team at work",
+    shapeitHeroImageAlt: "Neriah Tellerup Andersen marketing specialist",
+    featuredTestimonialBrand: "Nordic Wellness Studio",
+    socialShowcaseImageAlt: "Neda Media content"
   }
+};
+
+const translationsDa = {
+  nav: {
+    about: "Om os",
+    services: "Ydelser",
+    performance: "Performance marketing",
+    social: "Social media",
+    meeting: "Book møde",
+    menu: "Menu",
+    mobileAds: "Annoncer",
+    mobileSocial: "SoMe",
+    mobileCall: "Møde",
+    langSwitcher: "Sprog",
+    mobileNavLabel: "Mobil navigation"
+  },
+  home: {
+    heroLabel: "Performance marketing-bureau",
+    heroTitle: "Vi skaber vækst",
+    heroAccent: "du kan mærke",
+    heroSubtitle: "Performance marketing og social media management for ambitiøse brands i Skandinavien",
+    strategy: "Book strategimøde",
+    results: "Vores resultater",
+    explore: "Udforsk",
+    clients: "Udvalgte kunder",
+    clientsTitle: "Brands vi har arbejdet med",
+    brandStory:
+      "Neda Media er ikke bare endnu et marketingbureau. Vi er jeres strategiske vækstpartner med fokus på autentisk, menneskeligt indhold, der skaber tillid, og performance-drevet annoncering med målbare resultater.",
+    rolesTitle: "Vi er ikke bare et bureau.",
+    rolesIntro: "Vi træder til som teamet, der spotter muligheder, løser problemer og får indhold til at performe.",
+    roles: [
+      "Jeres strateg",
+      "Jeres vækstpartner",
+      "Jeres kreative director",
+      "Jeres problemløser",
+      "Jeres trendspotter",
+      "Jeres videoeditor"
+    ],
+    servicesLabel: "Ydelser",
+    servicesTitle: "Det vi er bedst til",
+    readMore: "Læs mere",
+    casesLabel: "Cases",
+    casesTitle: "Resultater der taler deres eget sprog",
+    caseType: "Performance marketing-case",
+    caseTitle: "Fra uprofitabel webshop til 5X overskudsvækst",
+    caseText:
+      "Shapeit.dk kom til os med en webshop uden fart på. Med strategiske Meta Ads, kreativ produktion og data-drevet optimering transformerede vi forretningen på kun 365 dage.",
+    caseMetrics: [
+      ["500%", "Overskudsvækst"],
+      ["365", "Tidslinje"],
+      ["12X", "ROAS"]
+    ],
+    getResults: "Få lignende resultater",
+    stats: ["Glade kunder", "Annonceforbrug (DKK)", "Gennemsnitlig ROAS", "Gns. stigning i engagement"],
+    aboutLabel: "Om Neda Media",
+    aboutTitle: "Neriah Tellerup Andersen",
+    aboutRole: "Stifter & marketing specialist",
+    aboutText1:
+      "Med passion for autentisk marketing og datadrevne resultater stiftede jeg Neda Media for at hjælpe ambitiøse brands med at vokse. Jeg tror på, at de bedste resultater kommer fra ægte, menneskeligt indhold.",
+    aboutText2:
+      "Min tilgang kombinerer kreativ storytelling med hård performance-data. Resultatet? Brands der både ser stærke ud og leverer i bundlinjen.",
+    bookTalk: "Book et møde",
+    proofLabel: "Udvalgt arbejde",
+    proofTitle: "Se Neriah skabe indhold i praksis",
+    proofText: "Et udvalg af video, billeder og content production fra Neriahs arbejde.",
+    proofProfile: "Se mere på Instagram",
+    testimonialsLabel: "Udtalelser",
+    testimonialsTitle: "Det siger vores kunder",
+    faqLabel: "FAQ",
+    faqTitle: "Ofte stillede spørgsmål",
+    faqIntro:
+      "Find svar på de vigtigste spørgsmål om samarbejde, pris, platforme og hvordan vi bygger vækst.",
+    ctaTitle: "Klar til at skalere jeres forretning?",
+    ctaText:
+      "Book et gratis strategimøde, og lad os vise jer præcis, hvordan Neda Media kan hjælpe jer med at vokse gennem performance marketing og social media.",
+    carouselTestimonials: [
+      {
+        name: "Marie Jensen",
+        designation: "Shapeit.dk",
+        quote:
+          "Neda Media har fuldstændig forvandlet vores online tilstedeværelse. Salget er taget fart, og vi hører fra nye kunder hver dag."
+      },
+      {
+        name: "Andreas Holm",
+        designation: "Nordic Wellness Studio",
+        quote:
+          "Endelig et bureau, der forstår vores brand og leverer indhold, vi er stolte af. Neriah er utrolig dygtig til at ramme den rigtige stemning."
+      },
+      {
+        name: "Sofia Larsen",
+        designation: "Bloom Beauty",
+        quote:
+          "Vi gik fra at bruge penge på annoncer uden resultater til at have et system, der konsekvent skaber leads og salg."
+      }
+    ]
+  },
+  services: [
+    [
+      "01",
+      "Performance marketing",
+      "Strategisk Meta- og Google-annoncering der konverterer. Vi bygger skalerbare systemer til leads, salg og vækst med data og kreativitet."
+    ],
+    [
+      "02",
+      "Social media management",
+      "Indholdsstrategi, produktion og community management der styrker jeres brand. Autentisk storytelling der skaber loyale følgere."
+    ]
+  ],
+  faq: faqsDa,
+  servicePages: {
+    performance: performanceDataDa,
+    social: socialDataDa
+  },
+  about: {
+    title: "Vi er Neda Media.",
+    accent: "Jeres vækstteam.",
+    subtitle:
+      'Vi blev skabt af frustration over "fluffy" marketing uden ansvar for bundlinjen. Vi er ikke et traditionelt bureau. Vi er et agilet team af specialister inden for performance og kreativitet.',
+    meeting: "Book et uforpligtende møde",
+    articles: "Se vores artikler",
+    missionLabel: "Mission",
+    mission:
+      "Vores mission er at forbinde ambitiøse brands med deres målgrupper gennem autentisk, resultatorienteret marketing. Vi vinder kun, når vores kunder vinder.",
+    members: [
+      [
+        "Neriah",
+        "Stifter & head of strategy",
+        "Jeg startede min egen webshop, da jeg var 11. Det projekt lærte mig værdien af ægte online marketing og gav mig drive til at hjælpe ambitiøse brands med at vokse."
+      ],
+      [
+        "Cecilie",
+        "Junior specialist i betalt og organisk",
+        "Jeg hedder Cecilie Heinrichsen, og jeg brænder for medier, indhold og stærke communities. Hos Neda Media hjælper jeg virksomheder med at vokse gennem organiske og betalte kanaler."
+      ]
+    ],
+    ctaTitle: "Klar til at styrke jeres brand online?",
+    ctaText: "Book et uforpligtende møde, og lad os vise, hvordan vi kan styrke jeres forretning."
+  },
+  shapeitCase: {
+    eyebrow: "Shapeit.dk case",
+    title: "Sådan 5X'ede Shapeit overskuddet ved at markete smartere til kvinder",
+    subtitle:
+      "Se hvordan vi kombinerede data, psykologi og performance marketing for at skabe vækst på rekordtid.",
+    primaryCta: "Se videoen",
+    primarySubtext: "Lær hvordan I kan gøre det samme!",
+    logosLabel: "Udvalgte brands og samarbejder",
+    testimonialsTitle: "Udtalelser",
+    testimonials: [
+      [
+        "Dedikeret, ambitiøs og talentfuld",
+        "Neriah er utrolig dedikeret, ambitiøs og talentfuld. Hendes evne til hurtigt at forstå vores behov gjorde samarbejdet effektivt fra dag ét.",
+        "Rie Møller"
+      ],
+      [
+        "Professionel annoncering med resultater",
+        "Jeg har haft fornøjelsen af at arbejde med Neriah på tværs af flere projekter. Hun er grundig, kreativ og stærkt performance-fokuseret.",
+        "Malene"
+      ],
+      [
+        "Samarbejde med Neriah",
+        "Neriah er dygtig, kreativ og seriøs. Hun har gjort en reel forskel for os og får min varmeste anbefaling.",
+        "Ulrik Juhl"
+      ]
+    ],
+    ctaTitle: "Vil I også skabe smartere vækst?",
+    ctaText: "Book et strategimøde, og lad os gennemgå, hvor I kan løfte jeres performance."
+  },
+  cta: {
+    label: "Lad os tale sammen",
+    meeting: "Book et gratis strategimøde",
+    services: "Se vores ydelser"
+  },
+  footer: {
+    text: "Performance marketing- og social media-bureau for ambitiøse brands i Danmark.",
+    nav: "Navigation",
+    contact: "Kontakt",
+    social: "Sociale medier",
+    home: "Forside",
+    rights: "© 2026 Neda Media. Alle rettigheder forbeholdes."
+  },
+  labels: {
+    whatWeOffer: "Det vi tilbyder",
+    process: "Proces",
+    stepPrefix: "Trin",
+    featuredCase: "Udvalgt case",
+    shapeitSpotlightTitle: "Shapeit.dk 5X overskudsvækst",
+    shapeitSpotlightBody:
+      "Shapeit.dk var en webshop med potentiale, men uden klar retning i marketing. Vi overtog og forvandlede alt.",
+    shapeitSpotlightMetrics: [
+      ["500%", "Overskudsvækst"],
+      ["12X", "ROAS opnået"],
+      ["365", "Dage"]
+    ],
+    shapeitSpotlightBullets: [
+      "Komplet omstrukturering af Meta Ads-kontoen",
+      "Ny kreativ strategi med UGC og lifestyle-indhold",
+      "Implementering af server-side tracking",
+      "Skalering af annonceforbrug fra 5.000 kr./md. til 80.000 kr./md."
+    ],
+    portfolio: "Portfolio",
+    engagingContent: "Indhold der engagerer",
+    socialQuote:
+      "Neriah forstår virkelig vores brand og skaber indhold, der føles 100 % autentisk. Vores engagement er steget markant.",
+    video: "Video",
+    proofWorkImageAlt: "Udvalgt arbejde",
+    ctaTeamImageAlt: "Neda Media-teamet i arbejde",
+    shapeitHeroImageAlt: "Neriah Tellerup Andersen marketing specialist",
+    featuredTestimonialBrand: "Nordic Wellness Studio",
+    socialShowcaseImageAlt: "Neda Media-indhold"
+  }
+};
+
+const TRANSLATIONS = {
+  en: translationsEn,
+  da: translationsDa
 };
 
 function useRoute() {
@@ -331,13 +710,30 @@ function useRoute() {
   return route;
 }
 
+function readInitialLocale() {
+  try {
+    const stored = window.localStorage.getItem(LOCALE_STORAGE_KEY);
+    if (stored === "en" || stored === "da") return stored;
+  } catch {
+    /* ignore */
+  }
+  if (typeof navigator !== "undefined" && /^da\b/i.test(navigator.language || "")) return "da";
+  return "en";
+}
+
 function App() {
   const route = useRoute();
-  const t = translations;
+  const [locale, setLocale] = useState(readInitialLocale);
+  const t = useMemo(() => TRANSLATIONS[locale], [locale]);
 
   useEffect(() => {
-    document.documentElement.lang = "en";
-  }, []);
+    document.documentElement.lang = locale === "da" ? "da" : "en";
+    try {
+      window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+    } catch {
+      /* ignore */
+    }
+  }, [locale]);
 
   useEffect(() => {
     document.documentElement.classList.remove("theme-dark");
@@ -350,19 +746,51 @@ function App() {
     if (route === "social-media") return <ServicePage data={t.servicePages.social} t={t} />;
     if (route === "case-study-shapeit") return <ShapeitCasePage t={t} />;
     return <HomePage t={t} />;
-  }, [route]);
+  }, [route, t]);
 
   return (
     <div className="min-h-screen bg-beige text-ink transition-colors duration-300">
       <div className="noise" aria-hidden="true" />
-      <Header route={route} t={t} />
+      <Header route={route} t={t} locale={locale} onLocaleChange={setLocale} />
       {page}
       <Footer t={t} />
     </div>
   );
 }
 
-function Header({ route, t }) {
+function LangSwitcher({ locale, onLocaleChange, solidHeader, t }) {
+  const muted = solidHeader ? "text-ink/55" : "text-beige/60";
+  const activeCls = solidHeader ? "text-ink" : "text-beige";
+  const btn = (code, label) => (
+    <button
+      key={code}
+      type="button"
+      className={`rounded-md px-1.5 py-0.5 transition ${
+        locale === code ? `${activeCls} underline decoration-2 underline-offset-4` : `${muted} hover:opacity-100`
+      }`}
+      onClick={() => onLocaleChange(code)}
+      lang={code}
+    >
+      {label}
+    </button>
+  );
+
+  return (
+    <div
+      className={`flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide ${solidHeader ? "text-ink" : "text-beige"}`}
+      role="group"
+      aria-label={t.nav.langSwitcher}
+    >
+      {btn("da", "DA")}
+      <span className={muted} aria-hidden>
+        |
+      </span>
+      {btn("en", "EN")}
+    </div>
+  );
+}
+
+function Header({ route, t, locale, onLocaleChange }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -379,9 +807,9 @@ function Header({ route, t }) {
   const mobileNavItems = [
     { href: "#/", label: t.footer.home, icon: "home", active: route === "home" },
     { href: "#/about-us", label: t.nav.about, icon: "about", active: route === "about-us" },
-    { href: "#/performance-marketing", label: "Ads", icon: "chart", active: route === "performance-marketing" },
-    { href: "#/social-media", label: "Social", icon: "social", active: route === "social-media" },
-    { href: CALENDLY, label: "Call", icon: "calendar", active: false }
+    { href: "#/performance-marketing", label: t.nav.mobileAds, icon: "chart", active: route === "performance-marketing" },
+    { href: "#/social-media", label: t.nav.mobileSocial, icon: "social", active: route === "social-media" },
+    { href: CALENDLY, label: t.nav.mobileCall, icon: "calendar", active: false }
   ];
   const close = () => {};
 
@@ -394,10 +822,15 @@ function Header({ route, t }) {
             : "bg-transparent py-5"
         }`}
       >
-        <div className="container-shell grid grid-cols-1 items-center lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
-          <a href="#/" onClick={close} className="shrink-0 justify-self-start">
-            <img src={logoSrc} alt="Neda Media" className="h-12 w-40 object-contain" />
-          </a>
+        <div className="container-shell grid grid-cols-1 items-center gap-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
+          <div className="flex w-full items-center justify-between gap-4 lg:contents">
+            <a href="#/" onClick={close} className="shrink-0 justify-self-start">
+              <img src={logoSrc} alt="Neda Media" className="h-12 w-40 object-contain" />
+            </a>
+            <div className={`shrink-0 lg:hidden ${controlsColor}`}>
+              <LangSwitcher locale={locale} onLocaleChange={onLocaleChange} solidHeader={solidHeader} t={t} />
+            </div>
+          </div>
 
           <nav
             className={`hidden text-sm font-semibold uppercase lg:block lg:justify-self-center ${desktopNavColor}`}
@@ -423,7 +856,8 @@ function Header({ route, t }) {
               </ul>
           </nav>
 
-          <div className={`hidden items-center justify-self-end lg:flex ${controlsColor}`}>
+          <div className={`hidden items-center justify-end gap-5 justify-self-end lg:flex ${controlsColor}`}>
+            <LangSwitcher locale={locale} onLocaleChange={onLocaleChange} solidHeader={solidHeader} t={t} />
             <a href={CALENDLY} className={`btn py-3 ${solidHeader ? "btn-primary" : "btn-light"}`}>
               {t.nav.meeting}
             </a>
@@ -431,7 +865,7 @@ function Header({ route, t }) {
         </div>
       </header>
 
-      <nav className="fixed inset-x-4 bottom-4 z-50 rounded-2xl border border-ink/10 bg-cream/95 px-3 py-2 shadow-soft backdrop-blur lg:hidden" aria-label="Mobile navigation">
+      <nav className="fixed inset-x-4 bottom-4 z-50 rounded-2xl border border-ink/10 bg-cream/95 px-3 py-2 shadow-soft backdrop-blur lg:hidden" aria-label={t.nav.mobileNavLabel}>
         <ul className="grid grid-cols-5 gap-1">
           {mobileNavItems.map((item) => (
             <li key={item.href}>
@@ -721,7 +1155,7 @@ function ProofOfWork({ t }) {
               >
                 <img
                   src={`/images/proof-of-work/${image}`}
-                  alt={`Proof of work ${index + 1}`}
+                  alt={`${t.labels.proofWorkImageAlt} ${index + 1}`}
                   className="h-auto w-full transition duration-500 group-hover:scale-105"
                 />
               </div>
@@ -734,29 +1168,10 @@ function ProofOfWork({ t }) {
 }
 
 function Testimonials({ t }) {
-  const testimonials = [
-    {
-      name: "Marie Jensen",
-      designation: "Shapeit.dk",
-      src: "/images/neriah-portrait.png",
-      quote:
-        "Neda Media has completely transformed our online presence. Our sales have taken off, and we hear from new customers every day."
-    },
-    {
-      name: "Andreas Holm",
-      designation: "Nordic Wellness Studio",
-      src: "/images/hero-portrait.png",
-      quote:
-        "Finally an agency that understands our brand and delivers content we're proud of. Neriah is incredibly skilled at capturing the right mood."
-    },
-    {
-      name: "Sofia Larsen",
-      designation: "Bloom Beauty",
-      src: "/images/cecilie-portrait.avif",
-      quote:
-        "We went from spending on ads with no results to having a system that consistently generates leads and sales."
-    }
-  ];
+  const testimonials = t.home.carouselTestimonials.map((item, index) => {
+    const srcs = ["/images/neriah-portrait.png", "/images/hero-portrait.png", "/images/cecilie-portrait.avif"];
+    return { ...item, src: srcs[index] };
+  });
 
   return (
     <section className="section-pad bg-beige">
@@ -858,7 +1273,7 @@ function ShapeitCasePage({ t }) {
           <div className="image-frame">
             <img
               src="/images/proof-of-work/proof-work1.jpg"
-              alt="Neriah Tellerup Andersen marketing specialist"
+              alt={t.labels.shapeitHeroImageAlt}
               className="h-[360px] w-full object-cover md:h-[520px]"
             />
           </div>
@@ -1106,7 +1521,7 @@ function PillarLogo({ title }) {
     );
   }
 
-  if (lower.includes("community")) {
+  if (lower.includes("community") || lower.includes("fællesskab")) {
     return iconWrap(
       <>
         <path d="M16 24a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z" />
@@ -1225,7 +1640,7 @@ function SocialShowcase({ t }) {
         <div className="grid auto-rows-[260px] gap-5 md:grid-cols-4">
           {images.map(([src, span]) => (
             <div key={src} className={`image-frame ${span}`}>
-              <img src={src} alt="Neda Media content" className="h-full w-full object-cover" />
+              <img src={src} alt={t.labels.socialShowcaseImageAlt} className="h-full w-full object-cover" />
             </div>
           ))}
         </div>
@@ -1291,7 +1706,7 @@ function FeaturedSocialTestimonial({ t }) {
         <blockquote className="font-display text-3xl leading-tight md:text-5xl">
           “{t.labels.socialQuote}”
         </blockquote>
-        <p className="mt-6 text-taupe">Nordic Wellness Studio</p>
+        <p className="mt-6 text-taupe">{t.labels.featuredTestimonialBrand}</p>
       </div>
     </section>
   );
@@ -1316,7 +1731,7 @@ function CTA({ title, text, splitImage, t }) {
         </div>
         {splitImage && (
           <div className="image-frame">
-            <img src={splitImage} alt="Neda Media team at work" className="h-[420px] w-full object-cover" />
+            <img src={splitImage} alt={t.labels.ctaTeamImageAlt} className="h-[420px] w-full object-cover" />
           </div>
         )}
       </div>
