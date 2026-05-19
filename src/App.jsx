@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok } from "react-icons/fa";
 import { CircularTestimonials } from "./components/ui/circular-testimonials.jsx";
 
@@ -694,20 +694,82 @@ const TRANSLATIONS = {
   da: translationsDa
 };
 
-function useRoute() {
-  const parseRoute = () => window.location.hash.replace("#/", "") || "home";
-  const [route, setRoute] = useState(parseRoute);
+function pathnameToRoute(pathname) {
+  const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "");
+  let path = pathname;
+  if (base && path.startsWith(base)) {
+    path = path.slice(base.length) || "/";
+  }
+  if (!path.startsWith("/")) path = `/${path}`;
+  const segment = path.replace(/^\/+/, "").split("/").filter(Boolean)[0];
+  if (!segment) return "home";
+  return segment;
+}
 
-  useEffect(() => {
-    const onHash = () => {
-      setRoute(parseRoute());
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+const RouteContext = createContext(null);
+
+function RouteProvider({ children }) {
+  const [route, setRoute] = useState(() => {
+    if (typeof window !== "undefined" && window.location.hash.startsWith("#/")) {
+      const segment = window.location.hash.replace("#/", "").split("?")[0] || "home";
+      const path = !segment || segment === "home" ? "/" : `/${segment}`;
+      window.history.replaceState(null, "", path + window.location.search);
+    }
+    return pathnameToRoute(window.location.pathname);
+  });
+
+  const navigate = useCallback((to) => {
+    const segment =
+      !to || to === "home"
+        ? "home"
+        : String(to)
+            .replace(/^\/+/, "")
+            .split("/")
+            .filter(Boolean)[0] || "home";
+    const path = segment === "home" ? "/" : `/${segment}`;
+    window.history.pushState(null, "", path);
+    setRoute(pathnameToRoute(window.location.pathname));
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  return route;
+  useEffect(() => {
+    const onPop = () => {
+      setRoute(pathnameToRoute(window.location.pathname));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  const value = useMemo(() => ({ route, navigate }), [route, navigate]);
+  return <RouteContext.Provider value={value}>{children}</RouteContext.Provider>;
+}
+
+function useAppRoute() {
+  const ctx = useContext(RouteContext);
+  if (!ctx) throw new Error("useAppRoute must be used within RouteProvider");
+  return ctx;
+}
+
+function AppLink({ to, children, className, onClick, ...rest }) {
+  const { navigate } = useAppRoute();
+  const href = !to || to === "home" ? "/" : `/${String(to).replace(/^\/+/, "")}`;
+  return (
+    <a
+      href={href}
+      className={className}
+      {...rest}
+      onClick={(e) => {
+        onClick?.(e);
+        if (e.defaultPrevented) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        navigate(to);
+      }}
+    >
+      {children}
+    </a>
+  );
 }
 
 function readInitialLocale() {
@@ -722,7 +784,6 @@ function readInitialLocale() {
 }
 
 function App() {
-  const route = useRoute();
   const [locale, setLocale] = useState(readInitialLocale);
   const t = useMemo(() => TRANSLATIONS[locale], [locale]);
 
@@ -739,6 +800,16 @@ function App() {
     document.documentElement.classList.remove("theme-dark");
     window.localStorage.removeItem("theme");
   }, []);
+
+  return (
+    <RouteProvider>
+      <AppContent locale={locale} setLocale={setLocale} t={t} />
+    </RouteProvider>
+  );
+}
+
+function AppContent({ locale, setLocale, t }) {
+  const { route } = useAppRoute();
 
   const page = useMemo(() => {
     if (route === "about-us") return <AboutPage t={t} />;
@@ -805,11 +876,11 @@ function Header({ route, t, locale, onLocaleChange }) {
   const desktopNavColor = solidHeader ? "lg:text-ink" : "lg:text-beige";
   const controlsColor = solidHeader ? "text-ink" : "text-beige";
   const mobileNavItems = [
-    { href: "#/", label: t.footer.home, icon: "home", active: route === "home" },
-    { href: "#/about-us", label: t.nav.about, icon: "about", active: route === "about-us" },
-    { href: "#/performance-marketing", label: t.nav.mobileAds, icon: "chart", active: route === "performance-marketing" },
-    { href: "#/social-media", label: t.nav.mobileSocial, icon: "social", active: route === "social-media" },
-    { href: CALENDLY, label: t.nav.mobileCall, icon: "calendar", active: false }
+    { to: "home", label: t.footer.home, icon: "home", active: route === "home" },
+    { to: "about-us", label: t.nav.about, icon: "about", active: route === "about-us" },
+    { to: "performance-marketing", label: t.nav.mobileAds, icon: "chart", active: route === "performance-marketing" },
+    { to: "social-media", label: t.nav.mobileSocial, icon: "social", active: route === "social-media" },
+    { external: true, href: CALENDLY, label: t.nav.mobileCall, icon: "calendar", active: false }
   ];
   const close = () => {};
 
@@ -824,9 +895,9 @@ function Header({ route, t, locale, onLocaleChange }) {
       >
         <div className="container-shell grid grid-cols-1 items-center gap-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
           <div className="flex w-full items-center justify-between gap-4 lg:contents">
-            <a href="#/" onClick={close} className="shrink-0 justify-self-start">
+            <AppLink to="home" onClick={close} className="shrink-0 justify-self-start">
               <img src={logoSrc} alt="Neda Media" className="h-12 w-40 object-contain" />
-            </a>
+            </AppLink>
             <div className={`shrink-0 lg:hidden ${controlsColor}`}>
               <LangSwitcher locale={locale} onLocaleChange={onLocaleChange} solidHeader={solidHeader} t={t} />
             </div>
@@ -838,19 +909,19 @@ function Header({ route, t, locale, onLocaleChange }) {
           >
             <ul className="flex items-center gap-7">
                 <li>
-                  <a className={linkState(route === "about-us")} href="#/about-us" onClick={close}>
+                  <AppLink className={linkState(route === "about-us")} to="about-us" onClick={close}>
                     {t.nav.about}
-                  </a>
+                  </AppLink>
                 </li>
                 <li className="group relative">
                   <span className="inline-flex cursor-default items-center gap-2 py-2">{t.nav.services}</span>
                   <div className="absolute left-0 mt-2 grid min-w-64 gap-3 rounded-lg border border-white/10 bg-cream p-4 text-ink opacity-0 shadow-soft transition group-hover:opacity-100">
-                    <a href="#/performance-marketing" onClick={close} className="hover:text-rust">
+                    <AppLink to="performance-marketing" onClick={close} className="hover:text-rust">
                       {t.nav.performance}
-                    </a>
-                    <a href="#/social-media" onClick={close} className="hover:text-rust">
+                    </AppLink>
+                    <AppLink to="social-media" onClick={close} className="hover:text-rust">
                       {t.nav.social}
-                    </a>
+                    </AppLink>
                   </div>
                 </li>
               </ul>
@@ -868,16 +939,28 @@ function Header({ route, t, locale, onLocaleChange }) {
       <nav className="fixed inset-x-4 bottom-4 z-50 rounded-2xl border border-ink/10 bg-cream/95 px-3 py-2 shadow-soft backdrop-blur lg:hidden" aria-label={t.nav.mobileNavLabel}>
         <ul className="grid grid-cols-5 gap-1">
           {mobileNavItems.map((item) => (
-            <li key={item.href}>
-              <a
-                href={item.href}
-                className={`grid place-items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-bold uppercase transition ${
-                  item.active ? "bg-olive text-beige" : "text-ink/70 hover:bg-ink/5 hover:text-ink"
-                }`}
-              >
-                <NavIcon name={item.icon} />
-                <span>{item.label}</span>
-              </a>
+            <li key={item.external ? item.href : item.to}>
+              {item.external ? (
+                <a
+                  href={item.href}
+                  className={`grid place-items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-bold uppercase transition ${
+                    item.active ? "bg-olive text-beige" : "text-ink/70 hover:bg-ink/5 hover:text-ink"
+                  }`}
+                >
+                  <NavIcon name={item.icon} />
+                  <span>{item.label}</span>
+                </a>
+              ) : (
+                <AppLink
+                  to={item.to}
+                  className={`grid place-items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-bold uppercase transition ${
+                    item.active ? "bg-olive text-beige" : "text-ink/70 hover:bg-ink/5 hover:text-ink"
+                  }`}
+                >
+                  <NavIcon name={item.icon} />
+                  <span>{item.label}</span>
+                </AppLink>
+              )}
             </li>
           ))}
         </ul>
@@ -1028,7 +1111,7 @@ function AgencyRoles({ t }) {
 function ServicesOverview({ t }) {
   const services = t.services.map((service, index) => [
     ...service,
-    index === 0 ? "#/performance-marketing" : "#/social-media"
+    index === 0 ? "performance-marketing" : "social-media"
   ]);
 
   return (
@@ -1036,15 +1119,15 @@ function ServicesOverview({ t }) {
       <div className="container-shell">
         <SectionHeader label={t.home.servicesLabel} title={t.home.servicesTitle} center />
         <div className="grid gap-6 md:grid-cols-2">
-          {services.map(([number, title, text, href]) => (
-            <a key={title} href={href} className="card group min-h-80">
+          {services.map(([number, title, text, to]) => (
+            <AppLink key={title} to={to} className="card group min-h-80">
               <span className="font-accent text-3xl italic text-rust">{number}</span>
               <h3 className="mt-8 text-3xl">{title}</h3>
               <p className="mt-5 text-taupe">{text}</p>
               <span className="mt-8 inline-flex items-center gap-3 border-b border-current pb-1 text-sm font-bold uppercase text-ink group-hover:text-rust">
                 {t.home.readMore} <span aria-hidden="true">→</span>
               </span>
-            </a>
+            </AppLink>
           ))}
         </div>
       </div>
@@ -1071,9 +1154,9 @@ function CaseStudy({ t }) {
                 </div>
               ))}
             </div>
-            <a href="#/case-study-shapeit" className="btn btn-outline mt-9">
+            <AppLink to="case-study-shapeit" className="btn btn-outline mt-9">
               {t.home.getResults}
-            </a>
+            </AppLink>
           </div>
           <div className="mx-auto w-full max-w-[400px] overflow-hidden rounded-lg bg-brown shadow-soft lg:mr-0">
             <video controls playsInline className="block h-auto w-full">
@@ -1724,9 +1807,9 @@ function CTA({ title, text, splitImage, t }) {
             <a href={CALENDLY} className="btn btn-light">
               {t.cta.meeting}
             </a>
-            <a href="#/performance-marketing" className="btn border border-beige/60 text-beige hover:bg-beige hover:text-olive">
+            <AppLink to="performance-marketing" className="btn border border-beige/60 text-beige hover:bg-beige hover:text-olive">
               {t.cta.services}
-            </a>
+            </AppLink>
           </div>
         </div>
         {splitImage && (
@@ -1760,10 +1843,10 @@ function Footer({ t }) {
           <div>
             <h3 className="font-body text-sm font-bold uppercase text-beige">{t.footer.nav}</h3>
             <ul className="mt-5 grid gap-3 text-beige/70">
-              <li><a href="#/">{t.footer.home}</a></li>
-              <li><a href="#/about-us">{t.nav.about}</a></li>
-              <li><a href="#/performance-marketing">{t.nav.performance}</a></li>
-              <li><a href="#/social-media">{t.nav.social}</a></li>
+              <li><AppLink to="home">{t.footer.home}</AppLink></li>
+              <li><AppLink to="about-us">{t.nav.about}</AppLink></li>
+              <li><AppLink to="performance-marketing">{t.nav.performance}</AppLink></li>
+              <li><AppLink to="social-media">{t.nav.social}</AppLink></li>
             </ul>
           </div>
           <div>
